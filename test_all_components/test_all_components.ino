@@ -4,10 +4,31 @@
 #include <SPI.h>
 #include <Wire.h>
 
+//Tastaturi matriciale
+#include <Keypad.h>
+
 //ENCODER ROTATIV
 #define ENC_A 18
 #define ENC_B 19
 
+//Tastaturi matriciale
+const byte ROWS = 4; 
+const byte COLS = 4; 
+
+char hexaKeys[ROWS][COLS] = {
+  {'1', '2', '3', 'A'},
+  {'4', '5', '6', 'B'},
+  {'7', '8', '9', 'C'},
+  {'*', '0', '#', 'D'}
+};
+
+byte rowPins1[ROWS] = {53, 51, 49, 47}; 
+byte colPins1[COLS] = {45, 43, 41, 39}; 
+
+byte rowPins2[ROWS] = {37, 35, 33, 31}; 
+byte colPins2[COLS] = {29, 27, 25, 23}; 
+
+//ENCODER ROTATIV
 unsigned long _lastIncReadTime = micros(); 
 unsigned long _lastDecReadTime = micros(); 
 int _pauseLength = 25000;//25000;
@@ -17,6 +38,10 @@ unsigned long before_display;
 
 //OLED
 U8G2_SSD1306_128X32_UNIVISION_F_HW_I2C u8g2(U8G2_R0); 
+
+//Tastaturi matriciale
+Keypad customKeypad1 = Keypad(makeKeymap(hexaKeys), rowPins1, colPins1, ROWS, COLS); 
+Keypad customKeypad2 = Keypad(makeKeymap(hexaKeys), rowPins2, colPins2, ROWS, COLS);
 
 void setup() {
   //OLED
@@ -46,6 +71,17 @@ void loop() {
    u8g2.sendBuffer();					// transfer internal memory to the display
   //Serial.println(micros()-before_display);
   delay(100);
+
+  char customKey1 = customKeypad1.getKey();
+  char customKey2 = customKeypad2.getKey();
+  
+  if (customKey1){
+    Serial.println(customKey1);
+  }
+
+  if (customKey2){
+    Serial.println(customKey2);
+  }
 }
 
 void read_encoder() {
